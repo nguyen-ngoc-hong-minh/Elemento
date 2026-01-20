@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elemento</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+    rel="stylesheet">
+
+  <script src="libraries/p5.min.js"></script>
+  <script src="libraries/p5.sound.min.js"></script>
+  <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+
+</head>
+
+<body>
+
+  <!-- CANVAS -->
+  <canvas class="webgl"></canvas>
+
+  <!-- UI -->
+  <div class="ui">
+
+    <!-- NAVIGATION -->
+    <div class="navigation">
+
+      <div class="top-left">
+        <span class="button" id="play">[P]lay music</span>
+        <span class="font-thin"> ｜ </span>
+        <span class="button" id="zen">[Z]en</span>
+        <span class="font-thin"> ｜ </span>
+        <span class="button" id="import">[I]mport</span>
+        <span class="font-thin"> ｜ </span>
+        <span class="button" id="capture">[C]apture</span>
+      </div>
+
+      <div class="bot-right">
+        <span class="button" id="about">[A]bout</span>
+      </div>
+
+      <div class="bot-left arrows">
+        <!-- LEFT ARROW -->
+        <div class="arrow-box" id="prev">
+          <svg width="26" height="26" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0.25 12.25V18.25H6.25" stroke="white" stroke-width="1" />
+            <path d="M18.25 6.25L18.25 0.25L12.25 0.249999" stroke="white" stroke-width="1" />
+            <path d="M6.25 0.25L0.25 0.25L0.249999 6.25" stroke="white" stroke-width="1" />
+            <path d="M12.25 18.25L18.25 18.25L18.25 12.25" stroke="white" stroke-width="1" />
+            <path d="M12.25 9.25L6.25 9.25M6.25 9.25L8.5 11.25M6.25 9.25L8.5 7.25" stroke="white" stroke-width="1" />
+          </svg>
+        </div>
+        <!-- RIGHT ARROW -->
+        <div class="arrow-box" id="next">
+          <svg width="26" height="26" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0.25 12.25V18.25H6.25" stroke="white" stroke-width="1" />
+            <path d="M18.25 6.25L18.25 0.25L12.25 0.249999" stroke="white" stroke-width="1" />
+            <path d="M6.25 0.25L0.25 0.25L0.249999 6.25" stroke="white" stroke-width="1" />
+            <path d="M12.25 18.25L18.25 18.25L18.25 12.25" stroke="white" stroke-width="1" />
+            <path d="M6.25 9.25H12.25M12.25 9.25L10 7.25M12.25 9.25L10 11.25" stroke="white" stroke-width="1" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="top-right gui-bar" id="distortionBar">
+        <!-- BAR -->
+        <svg class="bar-svg" width="128" height="19" viewBox="0 0 128 19" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path d="M121.25 0.25H127.25V18.25H121.25" stroke="white" stroke-width="1.2" />
+          <path d="M6.25 18.25L0.25 18.25L0.250001 0.249998L6.25 0.249999" stroke="white" stroke-width="1.2" />
+        </svg>
+        <div class="bar-label">Drag <span class="font-thin divider"> | </span> Scroll</div>
+        <!-- MARKER -->
+        <svg class="marker-svg" width="1" height="19" viewBox="0 0 1 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0.25 0V18" stroke="white" stroke-width="2" />
+        </svg>
+
+      </div>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <div class="heading">Wade of Eternity</div>
+
+      <div class="subtitle">
+        <div class="line" id="line1">| Song of Grief Song of |</div>
+        <div class="line" id="line2">| Grief Song of Grief Song of Grief |</div>
+        <div class="line" id="line3">| Song of Grief Song of Grief |</div>
+      </div>
+
+      <p class="body-text">
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
+        standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make
+        a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
+        remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
+        Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions
+        of Lorem Ipsum.
+      </p>
+    </div>
+
+    <!-- BOXES -->
+    <div class="boxes">
+      <div class="box" id="box1">
+        <svg class="box-border" viewBox="0 0 100 72" preserveAspectRatio="none">
+          <rect x="0" y="0" width="100" height="72" fill="none" stroke="white" stroke-width="0.5"
+            vector-effect="non-scaling-stroke" />
+        </svg>
+      </div>
+
+      <div class="box" id="box2">
+        <svg class="box-border" viewBox="0 0 100 72" preserveAspectRatio="none">
+          <rect x="0" y="0" width="100" height="72" fill="none" stroke="white" stroke-width="0.5"
+            vector-effect="non-scaling-stroke" />
+        </svg>
+      </div>
+
+      <div class="box" id="box3">
+        <svg class="box-border" viewBox="0 0 100 72" preserveAspectRatio="none">
+          <rect x="0" y="0" width="100" height="72" fill="none" stroke="white" stroke-width="0.5"
+            vector-effect="non-scaling-stroke" />
+        </svg>
+      </div>
+    </div>
+
+  </div>
+  
+  <script type="module" src="./script.js"></script>
+  <script src="sketch.js"></script>
+
+</body>
+
+</html>

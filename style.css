@@ -1,0 +1,269 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  font-family: "Roboto Mono", monospace;
+  color: #ffffffd0;
+  overflow: hidden;
+}
+
+:root {
+  --font-thin: 100;
+  --font-light: 350;
+  --font-regular: 400;
+  --font-bold: 500;
+  --font-size-ui: 10px;
+  --font-size-heading: 36px;
+  --font-size-subheading: 12px;
+  --font-size-body: 10px;
+
+  --box-image: none;
+}
+
+/* ===== CANVAS ===== */
+canvas.webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* ===== UI OVERLAY ===== */
+.ui {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+
+/* ===== NAVIGATION ===== */
+.navigation {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-ui);
+  font-weight: var(--font-regular);
+  z-index: 10;
+}
+
+/* ===== TOP LEFT ===== */
+.top-left {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  display: flex;
+  gap: 8px;
+}
+
+.font-thin {
+  font-weight: var(--font-thin);
+}
+
+/* ===== BOT LEFT ===== */
+.bot-left {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+/* ===== BOT RIGHT ===== */
+.bot-right {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  pointer-events: auto;
+}
+
+/* ===== TOP RIGHT ===== */
+.top-right {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  pointer-events: auto;
+}
+
+.top-right .gui-bar {
+  width: 97px;
+  position: relative;
+}
+
+.marker-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.bar-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-ui);
+  opacity: 1;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  margin-bottom: 5px;
+}
+
+#distortionBar:hover .bar-label {
+  opacity: 0;
+}
+
+#distortionBar:hover .marker-svg {
+  opacity: 1;
+}
+
+.divider::before,
+.divider::after {
+  content: " ";
+  display: inline-block;
+  width: 8px;
+}
+
+
+/* ===== CONTENT ===== */
+.content {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 48px;
+}
+
+.heading {
+  font-size: var(--font-size-heading);
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  margin-bottom: 70px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 300px;
+  font-size: var(--font-size-subheading);
+  font-weight: var(--font-bold);
+}
+
+.subtitle .line {
+  white-space: nowrap;
+}
+
+.body-text {
+  width: 200px;
+  font-size: var(--font-size-body);
+  line-height: 15px;
+  overflow: hidden;
+  transform: translateY(50%);
+}
+
+.body-line span {
+  opacity: 0;
+}
+
+/* ===== BOXES ===== */
+
+.boxes {
+  position: absolute;
+  right: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.box {
+  position: relative;
+  width: 180px;
+  height: 130px;
+
+  /* background-image: var(--box-image); */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  background-blend-mode: multiply;
+}
+
+.box-border {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 100; 
+}
+
+/* CORNER DOTS */
+.box::before,
+.box::after {
+  content: "";
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: white;
+  z-index: 100;
+}
+
+.box::before {
+  top: -1.5px;
+  left: -1.5px;
+  box-shadow: 180px 0 0 white;
+}
+
+.box::after {
+  bottom: -1.5px;
+  left: -1.5px;
+  box-shadow: 180px 0 0 white;
+}
+
+.box canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+
+  z-index: 2;
+  pointer-events: none;
+}
+
+#box2 {
+  position: relative;
+  width: 180px;
+  height: 130px;
+}
+
+#box2 canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ===== ZEN TRANSITION ===== */
+.navigation,
+.content,
+.boxes {
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+
+/* trạng thái ẩn */
+.zen-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
