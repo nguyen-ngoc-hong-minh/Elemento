@@ -11,13 +11,14 @@ html, body {
 
 :root {
   --font-thin: 100;
-  --font-light: 350;
+  --font-light: 400;
   --font-regular: 400;
-  --font-bold: 500;
+  --font-bold: 450;
   --font-size-ui: 10px;
   --font-size-heading: 36px;
   --font-size-subheading: 12px;
   --font-size-body: 10px;
+  --align: 36px;
 
   --box-image: none;
 }
@@ -53,8 +54,8 @@ canvas.webgl {
 /* ===== TOP LEFT ===== */
 .top-left {
   position: fixed;
-  top: 24px;
-  left: 24px;
+  top: var(--align);
+  left: var(--align);
   display: flex;
   gap: 8px;
 }
@@ -66,8 +67,8 @@ canvas.webgl {
 /* ===== BOT LEFT ===== */
 .bot-left {
   position: fixed;
-  bottom: 24px;
-  left: 24px;
+  bottom: var(--align);
+  left: var(--align);
   display: flex;
   gap: 8px;
   pointer-events: auto;
@@ -76,16 +77,16 @@ canvas.webgl {
 /* ===== BOT RIGHT ===== */
 .bot-right {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: var(--align);
+  right: var(--align);
   pointer-events: auto;
 }
 
 /* ===== TOP RIGHT ===== */
 .top-right {
   position: fixed;
-  top: 24px;
-  right: 24px;
+  top: var(--align);
+  right: var(--align);
   pointer-events: auto;
 }
 
@@ -142,6 +143,7 @@ canvas.webgl {
 .heading {
   font-size: var(--font-size-heading);
   margin-bottom: 20px;
+  font-style: normal;
 }
 
 .subtitle {
@@ -152,6 +154,7 @@ canvas.webgl {
   width: 300px;
   font-size: var(--font-size-subheading);
   font-weight: var(--font-bold);
+  font-style: normal;
 }
 
 .subtitle .line {
@@ -164,6 +167,7 @@ canvas.webgl {
   line-height: 15px;
   overflow: hidden;
   transform: translateY(50%);
+  font-style: normal;
 }
 
 .body-line span {
@@ -266,4 +270,3 @@ canvas.webgl {
   pointer-events: none;
   transition: opacity 0.4s ease;
 }
-
