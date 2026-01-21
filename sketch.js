@@ -1,137 +1,3 @@
-// =====================
-// SUBTITLE
-// =====================
-const subtitle = document.querySelector(".subtitle");
-
-let subtitlePaused = false;
-let subtitleTimer = null;
-const SUBTITLE_DELAY = 400;
-
-function rotateSubtitleOnce() {
-  if (subtitlePaused || !subtitle) return;
-
-  const first = subtitle.children[0];
-  subtitle.appendChild(first);
-
-  subtitleTimer = setTimeout(rotateSubtitleOnce, SUBTITLE_DELAY);
-}
-
-function initSubtitle() {
-  subtitlePaused = false;
-  rotateSubtitleOnce();
-}
-
-function resumeSubtitle() {
-  if (!subtitlePaused) return;
-  subtitlePaused = false;
-  rotateSubtitleOnce();
-}
-
-function pauseSubtitle() {
-  subtitlePaused = true;
-  clearTimeout(subtitleTimer);
-  subtitleTimer = null;
-}
-
-subtitle.addEventListener("mouseenter", pauseSubtitle);
-subtitle.addEventListener("mouseleave", resumeSubtitle);
-
-initSubtitle();
-
-
-// =====================
-// BODY TEXT
-// =====================
-const body = document.querySelector(".body-text");
-const rawText = body.innerText.trim();
-const words = rawText.split(" ");
-
-body.innerHTML = "";
-
-// measure layout
-const tempSpans = words.map(word => {
-  const span = document.createElement("span");
-  span.textContent = word + " ";
-  body.appendChild(span);
-  return span;
-});
-
-const linesMap = {};
-tempSpans.forEach(span => {
-  const top = span.offsetTop;
-  if (!linesMap[top]) linesMap[top] = [];
-  linesMap[top].push(span);
-});
-
-// rebuild DOM
-body.innerHTML = "";
-Object.values(linesMap).forEach(wordsInLine => {
-  const line = document.createElement("div");
-  line.className = "body-line";
-
-  const span = document.createElement("span");
-  span.textContent = wordsInLine.map(w => w.textContent).join("");
-
-  line.appendChild(span);
-  body.appendChild(line);
-});
-
-const bodyLines = Array.from(document.querySelectorAll(".body-line span"));
-
-let currentLine = 0;
-let bodyPaused = false;
-let revealTimer = null;
-let loopTimer = null;
-
-const REVEAL_DELAY = 220;
-const LOOP_DELAY = 300;
-
-function resetBody() {
-  bodyLines.forEach(span => span.style.opacity = 0);
-  body.style.transform = "translateY(50%)";
-  currentLine = 0;
-}
-
-function revealNextLine() {
-  if (bodyPaused) return;
-
-  if (currentLine >= bodyLines.length) {
-    loopTimer = setTimeout(playBodyFromStart, LOOP_DELAY);
-    return;
-  }
-
-  bodyLines[currentLine].style.opacity = 1;
-
-  const progress = (currentLine + 1) / bodyLines.length;
-  body.style.transform = `translateY(${50 - progress * 50}%)`;
-
-  currentLine++;
-  revealTimer = setTimeout(revealNextLine, REVEAL_DELAY);
-}
-
-function playBodyFromStart() {
-  clearTimeout(revealTimer);
-  clearTimeout(loopTimer);
-  resetBody();
-  revealNextLine();
-}
-
-function pauseBody() {
-  bodyPaused = true;
-  clearTimeout(revealTimer);
-  clearTimeout(loopTimer);
-}
-
-function resumeBody() {
-  if (!bodyPaused) return;
-  bodyPaused = false;
-  revealNextLine();
-}
-
-body.addEventListener("mouseenter", pauseBody);
-body.addEventListener("mouseleave", resumeBody);
-
-playBodyFromStart();
 
 
 // =====================
@@ -438,12 +304,6 @@ new p5(p => {
 // =====================
 // BOX2 – HALFTONE
 // =====================
-// =====================
-// BOX2 – HALFTONE (SAFE BASELINE)
-// =====================
-// =====================
-// BOX2 – HALFTONE (PIXEL PERFECT)
-// =====================
 
 new p5(p => {
 
@@ -545,7 +405,7 @@ new p5(p => {
 
     t += 0.03;
 
-    p.background(0);
+    p.clear();
     p.fill(255);
 
     // ===== FULL HEIGHT (COVER) =====
@@ -606,9 +466,7 @@ new p5(p => {
     }
   };
 
-  // =====================
   // RESIZE
-  // =====================
   p.windowResized = () => {
     if (!box2) return;
     p.resizeCanvas(box2.clientWidth, box2.clientHeight);
