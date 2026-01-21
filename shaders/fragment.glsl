@@ -14,7 +14,7 @@ void main() {
   float soft = smoothstep(0.5, 0.0, d);
 
   alpha *= soft;
-  alpha *= 0.3; // 🔆 sáng hơn chút
+  alpha *= 0.3;
 
-  gl_FragColor = vec4(color.rgb * 1.7, alpha); // ✨ glow nhẹ
+  gl_FragColor = vec4(color.rgb * 1.7, alpha);
 }
