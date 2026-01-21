@@ -13,7 +13,7 @@ html, body {
   --font-thin: 100;
   --font-light: 400;
   --font-regular: 400;
-  --font-bold: 450;
+  --font-bold: 440;
   --font-size-ui: 10px;
   --font-size-heading: 36px;
   --font-size-subheading: 12px;
@@ -110,6 +110,7 @@ canvas.webgl {
   align-items: center;
   justify-content: center;
   font-size: var(--font-size-ui);
+  font-weight: var(--font-regular);
   opacity: 1;
   transition: opacity 0.2s ease;
   pointer-events: none;
@@ -164,6 +165,7 @@ canvas.webgl {
 .body-text {
   width: 200px;
   font-size: var(--font-size-body);
+  font-weight: var(--font-light);
   line-height: 15px;
   overflow: hidden;
   transform: translateY(50%);
@@ -269,4 +271,52 @@ canvas.webgl {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s ease;
+}
+
+/* =========================
+   ABOUT OVERLAY
+========================= */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8); /* lớp đen mờ */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.about-box {
+  position: relative;
+  width: 400px;
+  transform: translateY(calc(-50% + 36px));
+}
+
+.about-frame {
+  position: absolute;
+  inset: 0;
+}
+
+.about-content {
+  position: relative;
+  z-index: 1;
+  padding: 32px;
+  color: #ffffffd0;
+  font-family: 'Roboto Mono', monospace;
+  text-align: center;
+}
+
+.about-content h2 {
+  font-weight: var(--font-regular);
+  font-size: 24px;
+}
+
+.about-content p {
+  font-size: 12px;
+  line-height: 1.6;
+  opacity: 0.85;
 }
