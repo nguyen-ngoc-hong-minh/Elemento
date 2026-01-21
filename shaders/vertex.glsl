@@ -1,5 +1,9 @@
 uniform float uTime;
 uniform float uDistortion;
+uniform float uA;
+uniform float uB;
+uniform float uX;
+uniform float uY;
 
 varying vec2 vUv;
 
@@ -193,7 +197,7 @@ vec3 curl_noise(vec3 p)
   float ddy = cnoise(p+vec3(0.0, step, 0.0)) - cnoise(p-vec3(0.0, step, 0.0));
   float ddz = cnoise(p+vec3(0.0, 0.0, step)) - cnoise(p-vec3(0.0, 0.0, step));
 
-  const float divisor = 1.0 / ( 2.0 * step );
+  float divisor = uA / ( 2.0 * step );
   return ( vec3(ddy - ddz, ddz - ddx, ddx - ddy) * divisor );
 }
 
@@ -207,21 +211,23 @@ vec3 fbm_vec3(vec3 p, float frequency, float offset)
 }
     void main() {
 
-        vec3 distortion =  vec3(position.x * 2., position.y,1.)*
-        curl_noise(
-            vec3(
-                position.x * 0.02 + uTime * 0.1, 
-                position.y * 0.009, 
-                uTime* 0.1
-                )) * uDistortion;
-        float jitter = cnoise(position * 0.1 + uTime * 0.2) * 2.0;
+        vec3 distortion = vec3(position.x * 2.0, position.y, 1.0) *
+  curl_noise(
+    vec3(
+      position.x * uX + uTime * 0.1,
+      position.y * uY,
+      uTime * uB
+    )
+  ) * uDistortion;
+
+        float jitter = cnoise(position * 0. + uTime * 0.2) * 2.0;
 vec3 finalPosition = position + distortion + vec3(jitter);
 
     
         vec4 modelViewPosition = modelViewMatrix * vec4(finalPosition, 1.);
 
         gl_Position = projectionMatrix * modelViewPosition;
-        gl_PointSize = 1.7;
+        gl_PointSize = 1.6;
        
 
     // varyings
