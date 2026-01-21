@@ -1,3 +1,31 @@
+const aboutBtn = document.getElementById("about");
+const aboutOverlay = document.getElementById("about-overlay");
+
+let aboutOpen = false;
+
+function toggleAbout(force) {
+  aboutOpen = force !== undefined ? force : !aboutOpen;
+  aboutOverlay.classList.toggle("hidden", !aboutOpen);
+}
+
+// CLICK BUTTON
+aboutBtn.addEventListener("click", () => {
+  toggleAbout();
+});
+
+// CLICK NỀN ĐEN → ĐÓNG
+aboutOverlay.addEventListener("click", (e) => {
+  if (e.target === aboutOverlay) {
+    toggleAbout(false);
+  }
+});
+
+// PHÍM TẮT
+window.addEventListener("keydown", (e) => {
+  if (e.key === "a" || e.key === "A") {
+    toggleAbout();
+  }
+});
 
 
 // =====================
