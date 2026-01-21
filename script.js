@@ -1,357 +1,317 @@
 import * as htmlToImage from "https://cdn.skypack.dev/html-to-image@1.11.11";
-import * as THREE from "https://cdn.skypack.dev/three@0.152.2";
-import GUI from "https://cdn.skypack.dev/lil-gui";
 
-// =====================
-// Load image
-// =====================]
+/* ==================================================
+   IMAGE LIST & IMAGE STATE (STATIC ONLY)
+================================================== */
+const IMAGES = ["./1.jpg", "./3.jpg", "./2.jpg", "./4.jpg", "./5.jpg"];
+let currentIndex = 1;
+
 const ImageState = {
-  src: "./4.jpg",
-  listeners: []
-};
-
-window.DistortionState = {
-  value: 0.3   // same as params.distortion
-};
-
-function setImageSrc(src) {
-  ImageState.src = src;
-  ImageState.listeners.forEach(fn => fn(src));
-}
-
-function onImageChange(fn) {
-  ImageState.listeners.push(fn);
-}
-
-window.ImageState = {
-  get src() {
-    return ImageState.src;
+  src: IMAGES[0],
+  listeners: [],
+  set(src) {
+    this.src = src;
+    this.listeners.forEach(fn => fn(src));
   },
   onChange(fn) {
-    ImageState.listeners.push(fn);
+    this.listeners.push(fn);
   }
 };
+window.ImageState = ImageState;
 
-// =====================
-// Load shaders
-// =====================
-async function loadShader(url) {
-  const res = await fetch(url);
-  return await res.text();
+/* ==================================================
+   IMAGE ↔ CONTENT MAP
+================================================== */
+const imageToContentMap = new Map();
+IMAGES.forEach((_, i) => imageToContentMap.set(i, i));
+
+/* ==================================================
+   DOM
+================================================== */
+const headingEl = document.querySelector(".heading");
+const subtitleEl = document.querySelector(".subtitle");
+const bodyEl = document.querySelector(".body-text");
+
+/* ==================================================
+   IMAGE NAVIGATION
+================================================== */
+function goToIndex(index) {
+  currentIndex = index;
+  ImageState.set(IMAGES[index]);
+
+  const key = imageToContentMap.get(index);
+  setContent(key);
 }
 
-// =====================
-// Canvas & Scene
-// =====================
-const canvas = document.querySelector(".webgl");
-const scene = new THREE.Scene();
-
-// =====================
-// Camera
-// =====================
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  5000
-);
-camera.position.set(0, 0, 1000);
-scene.add(camera);
-
-// =====================
-// Renderer
-// =====================
-const renderer = new THREE.WebGLRenderer({
-  canvas,
-  antialias: true,
-  preserveDrawingBuffer: true
-});
-
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setClearColor(0x000000, 1);
-
-// =====================
-// GUI - Bar
-// =====================
-const gui = new GUI();
-gui.hide();
-
-const params = { distortion: 0.3 };
-
-const bar = document.getElementById("distortionBar");
-const marker = bar.querySelector(".marker-svg");
-
-const BAR_WIDTH = 128;
-const MARKER_WIDTH = 1;
-const MIN = 0.3;
-const MAX = 1.0;
-const STEP = 0.015;
-
-let hoverBar = false;
-let dragging = false;
-
-bar.addEventListener("mouseenter", () => hoverBar = true);
-bar.addEventListener("mouseleave", () => {
-  hoverBar = false;
-  dragging = false;
-});
-
-bar.addEventListener("mousedown", e => {
-  dragging = true;
-  e.preventDefault();
-});
-
-window.addEventListener("mouseup", () => dragging = false);
-
-window.addEventListener("mousemove", e => {
-  if (!dragging) return;
-
-  const rect = bar.getBoundingClientRect();
-  const x = THREE.MathUtils.clamp(e.clientX - rect.left, 0, rect.width);
-  const t = x / rect.width;
-  params.distortion = MIN + t * (MAX - MIN);
-});
-
-window.addEventListener("wheel", e => {
-  if (!hoverBar) return;
-  e.preventDefault();
-
-  const dir = e.deltaY > 0 ? -1 : 1;
-  params.distortion = THREE.MathUtils.clamp(
-    params.distortion + dir * STEP,
-    MIN,
-    MAX
-  );
-}, { passive: false });
-
-function updateMarker() {
-  const t = (params.distortion - MIN) / (MAX - MIN);
-  marker.style.transform = `translateX(${t * (BAR_WIDTH - MARKER_WIDTH)}px)`;
+function nextImage() {
+  goToIndex((currentIndex + 1) % IMAGES.length);
 }
 
-// =====================
-// =====================
-// DISTORTION
-// =====================
-// =====================
-Promise.all([
-  loadShader("./shaders/vertex.glsl"),
-  loadShader("./shaders/fragment.glsl"),
-]).then(([vertexShader, fragmentShader]) => {
-  init(vertexShader, fragmentShader);
-});
-
-function init(vertexShader, fragmentShader) {
-
-  // =====================
-  // Pointcloud
-  // =====================
-  const geometry = new THREE.PlaneGeometry(330 * 1.5, 650 * 1.5, 330, 650);
-
-  const material = new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader,
-    uniforms: {
-      uTexture: { value: null },
-      uTime: { value: 0 },
-      uDistortion: { value: params.distortion },
-    },
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-  });
-
-  const points = new THREE.Points(geometry, material);
-  scene.add(points);
-
-  // =====================
-  // TEXTURE (SAU KHI MATERIAL TỒN TẠI)
-  // =====================
-  let texture;
-
-  function loadTexture(src) {
-    texture = new THREE.TextureLoader().load(src);
-    texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
-    material.uniforms.uTexture.value = texture;
-
-    // sync CSS box image
-    document.documentElement.style.setProperty(
-      "--box-image",
-      `url(${src})`
-    );
-  }
-
-  loadTexture(ImageState.src);
-  onImageChange(loadTexture);
-
-  // =====================
-  // Torus Knot
-  // =====================
-  const knotGeo = new THREE.TorusKnotGeometry(200, 200, 200);
-  const knotEdges = new THREE.EdgesGeometry(knotGeo);
-  const knotMaterial = new THREE.LineBasicMaterial({
-    color: 0xffffff,
-    transparent: true,
-    depthWrite: false,
-  });
-  const knot = new THREE.LineSegments(knotEdges, knotMaterial);
-  scene.add(knot);
-
-  // =====================
-  // Cube
-  // =====================
-  const boxGeo = new THREE.BoxGeometry(170, 170, 170);
-  const edges = new THREE.EdgesGeometry(boxGeo);
-  const cubeMaterial = new THREE.LineBasicMaterial({
-    color: 0xffffff,
-    transparent: true,
-    opacity: 0.3,
-    depthWrite: false,
-  });
-  const cube = new THREE.LineSegments(edges, cubeMaterial);
-  scene.add(cube);
-
-  // =====================
-  // Dots
-  // =====================
-  const positions = edges.attributes.position.array;
-  const dotCount = positions.length / 3;
-
-  const dotGeo = new THREE.SphereGeometry(0.5, 9, 9);
-  const dotMat = new THREE.MeshBasicMaterial({
-    color: 0xffffff,
-    transparent: true,
-    blending: THREE.AdditiveBlending,
-  });
-
-  const dots = new THREE.InstancedMesh(dotGeo, dotMat, dotCount);
-  const dummy = new THREE.Object3D();
-
-  for (let i = 0; i < dotCount; i++) {
-    dummy.position.set(
-      positions[i * 3],
-      positions[i * 3 + 1],
-      positions[i * 3 + 2]
-    );
-    dummy.updateMatrix();
-    dots.setMatrixAt(i, dummy.matrix);
-  }
-
-  scene.add(dots);
-
-  // =====================
-  // Animate
-  // =====================
-  const clock = new THREE.Clock();
-
-  function tick() {
-    const time = clock.getElapsedTime();
-
-    material.uniforms.uTime.value = time;
-    material.uniforms.uDistortion.value = params.distortion;
-
-window.DistortionState.value = params.distortion;
-
-
-    updateMarker();
-
-    cube.rotation.y += 0.001;
-    cube.scale.setScalar(1 + params.distortion * 9);
-
-    dots.rotation.copy(cube.rotation);
-    dots.scale.copy(cube.scale);
-
-    knot.rotation.y += 0.001;
-    knot.scale.setScalar(1 + params.distortion * 9);
-
-    knotMaterial.opacity =
-      THREE.MathUtils.clamp(
-        1.0 - (params.distortion - 0.12) / (1.0 - 0.12),
-        0,
-        1
-      ) * 0.12;
-
-    renderer.render(scene, camera);
-    requestAnimationFrame(tick);
-  }
-
-  tick();
+function prevImage() {
+  goToIndex((currentIndex - 1 + IMAGES.length) % IMAGES.length);
 }
 
-  // ===============================
-  // EXPORT PIPELINE
-  // ===============================
-
-  const EXPORT_KEY = "c";
-  const EXPORT_NAME = "Your Elemento";
-
-  const glCanvas = document.querySelector(".webgl");
-  const uiNode = document.querySelector(".ui");
-  const captureBtn = document.getElementById("capture");
-
-  async function exportArtwork() {
-    try {
-      const width = glCanvas.width;
-      const height = glCanvas.height;
-
-      const uiDataUrl = await htmlToImage.toPng(uiNode, {
-        pixelRatio: window.devicePixelRatio,
-        backgroundColor: "transparent",
-        preferredFontFormat: "woff2",
-        cacheBust: true
-      });
-
-      const uiImage = new Image();
-      uiImage.src = uiDataUrl;
-      await uiImage.decode();
-
-      const finalCanvas = document.createElement("canvas");
-      finalCanvas.width = width;
-      finalCanvas.height = height;
-
-      const ctx = finalCanvas.getContext("2d");
-      ctx.fillStyle = "#000";
-      ctx.fillRect(0, 0, width, height);
-
-      ctx.drawImage(glCanvas, 0, 0, width, height);
-      ctx.drawImage(uiImage, 0, 0, width, height);
-
-      const link = document.createElement("a");
-      link.download = `${EXPORT_NAME}.png`;
-      link.href = finalCanvas.toDataURL("image/png");
-      link.click();
-
-      console.log("✅ Exported");
-
-    } catch (e) {
-      console.error("❌ Export failed", e);
-    }
+/* ==================================================
+   CONTENT DATA
+================================================== */
+const CONTENTS = [
+  {
+    title: "Wade of Eternity",
+    subtitle: [
+      "| Song of Grief Song of |",
+      "| Grief Song of Grief Song of Grief |",
+      "| Song of Grief Song of Grief |"
+    ],
+    body: "Wade of Eternity Lorem Ipsum is simply dummy text."
+  },
+  {
+    title: "Breath of Wood",
+    subtitle: [
+      "| Growth without force |",
+      "| Direction without noise |",
+      "| Becoming unseen |"
+    ],
+    body: "Breath of Wood Lorem Ipsum is simply dummy text."
+  },
+  {
+    title: "Still Water",
+    subtitle: [
+      "| Reflection without source |",
+      "| Depth without gravity |",
+      "| Motion without trace |"
+    ],
+    body: "Water does not resist."
+  },
+  {
+    title: "Veins of Stone",
+    subtitle: [
+      "| Pressure remembers |",
+      "| Weight becomes form |",
+      "| Time hardens |"
+    ],
+    body: "Veins of Stone Lorem Ipsum."
+  },
+  {
+    title: "Ash and Fire",
+    subtitle: [
+      "| Heat without memory |",
+      "| Destruction clarifies |",
+      "| Essence remains |"
+    ],
+    body: "Ash and Fire Lorem Ipsum."
   }
+];
 
-  // Key C
-  document.addEventListener("keydown", (e) => {
-    if (e.key.toLowerCase() === EXPORT_KEY) {
-      e.preventDefault();
-      exportArtwork();
-    }
+/* ==================================================
+   SET CONTENT
+================================================== */
+function setContent(key) {
+  const data = CONTENTS[key];
+  if (!data) return;
+
+  headingEl.textContent = data.title;
+  setSubtitleLines(data.subtitle);
+  setBodyText(data.body);
+}
+
+/* ==================================================
+   SUBTITLE ENGINE
+================================================== */
+let subtitlePaused = false;
+let subtitleTimer = null;
+const SUBTITLE_DELAY = 400;
+
+function rotateSubtitleOnce() {
+  if (subtitlePaused || subtitleEl.children.length < 2) return;
+  subtitleEl.appendChild(subtitleEl.children[0]);
+  subtitleTimer = setTimeout(rotateSubtitleOnce, SUBTITLE_DELAY);
+}
+
+function stopSubtitle() {
+  subtitlePaused = true;
+  clearTimeout(subtitleTimer);
+}
+
+function startSubtitle() {
+  subtitlePaused = false;
+  rotateSubtitleOnce();
+}
+
+function setSubtitleLines(lines = []) {
+  stopSubtitle();
+  subtitleEl.innerHTML = "";
+
+  lines.forEach(text => {
+    const d = document.createElement("div");
+    d.className = "subtitle-line";
+    d.textContent = text;
+    subtitleEl.appendChild(d);
   });
 
-  // Click: #capture
-  if (captureBtn) {
-    captureBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      exportArtwork();
+  requestAnimationFrame(startSubtitle);
+}
+
+subtitleEl.addEventListener("mouseenter", stopSubtitle);
+subtitleEl.addEventListener("mouseleave", startSubtitle);
+
+/* ==================================================
+   BODY TEXT ENGINE
+================================================== */
+let bodyLines = [];
+let currentLine = 0;
+let bodyPaused = false;
+let revealTimer = null;
+let loopTimer = null;
+
+const REVEAL_DELAY = 220;
+const LOOP_DELAY = 300;
+
+function buildBodyLines(text) {
+  bodyEl.innerHTML = "";
+  const words = text.trim().split(" ");
+  const spans = [];
+
+  words.forEach(w => {
+    const s = document.createElement("span");
+    s.textContent = w + " ";
+    bodyEl.appendChild(s);
+    spans.push(s);
+  });
+
+  const map = {};
+  spans.forEach(s => {
+    const top = s.offsetTop;
+    (map[top] ||= []).push(s);
+  });
+
+  bodyEl.innerHTML = "";
+  Object.values(map).forEach(words => {
+    const line = document.createElement("div");
+    line.className = "body-line";
+
+    const span = document.createElement("span");
+    span.textContent = words.map(w => w.textContent).join("");
+    span.style.opacity = 0;
+
+    line.appendChild(span);
+    bodyEl.appendChild(line);
+  });
+
+  bodyLines = [...bodyEl.querySelectorAll(".body-line span")];
+}
+
+function resetBody() {
+  bodyLines.forEach(s => (s.style.opacity = 0));
+  bodyEl.style.transform = "translateY(50%)";
+  currentLine = 0;
+}
+
+function revealNextLine() {
+  if (bodyPaused) return;
+
+  if (currentLine >= bodyLines.length) {
+    loopTimer = setTimeout(playBodyFromStart, LOOP_DELAY);
+    return;
+  }
+
+  bodyLines[currentLine].style.opacity = 1;
+  bodyEl.style.transform =
+    `translateY(${50 - ((currentLine + 1) / bodyLines.length) * 50}%)`;
+
+  currentLine++;
+  revealTimer = setTimeout(revealNextLine, REVEAL_DELAY);
+}
+
+function playBodyFromStart() {
+  clearTimeout(revealTimer);
+  clearTimeout(loopTimer);
+  resetBody();
+  revealNextLine();
+}
+
+function setBodyText(text) {
+  bodyPaused = false;
+  buildBodyLines(text);
+  playBodyFromStart();
+}
+
+bodyEl.addEventListener("mouseenter", () => (bodyPaused = true));
+bodyEl.addEventListener("mouseleave", () => {
+  if (!bodyPaused) return;
+  bodyPaused = false;
+  revealNextLine();
+});
+
+/* ==================================================
+   SAFE BOOT
+================================================== */
+document.fonts.ready.then(() => {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      goToIndex(0);
     });
-  }
+  });
+});
 
+/* ==================================================
+   EXPORT
+================================================== */
+const EXPORT_KEY = "c";
+const EXPORT_NAME = "Your Elemento";
 
-// =====================
-// Resize
-// =====================
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const glCanvas = document.querySelector(".webgl");
+const uiNode = document.querySelector(".ui");
+const captureBtn = document.getElementById("capture");
+
+async function exportArtwork() {
+  const width = glCanvas.width;
+  const height = glCanvas.height;
+
+  const uiDataUrl = await htmlToImage.toPng(uiNode, {
+    backgroundColor: "transparent",
+    cacheBust: true,
+  });
+
+  const uiImage = new Image();
+  uiImage.src = uiDataUrl;
+  await uiImage.decode();
+
+  const finalCanvas = document.createElement("canvas");
+  finalCanvas.width = width;
+  finalCanvas.height = height;
+
+  const ctx = finalCanvas.getContext("2d");
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, width, height);
+  ctx.drawImage(glCanvas, 0, 0);
+  ctx.drawImage(uiImage, 0, 0);
+
+  const link = document.createElement("a");
+  link.download = `${EXPORT_NAME}.png`;
+  link.href = finalCanvas.toDataURL();
+  link.click();
+}
+
+/* ==================================================
+   KEY EVENTS
+================================================== */
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowRight") nextImage();
+  if (e.key === "ArrowLeft") prevImage();
+  if (e.key.toLowerCase() === EXPORT_KEY) exportArtwork();
+});
+
+document.getElementById("next")?.addEventListener("click", e => {
+  e.stopPropagation();
+  nextImage();
+});
+
+document.getElementById("prev")?.addEventListener("click", e => {
+  e.stopPropagation();
+  prevImage();
+});
+
+captureBtn?.addEventListener("click", e => {
+  e.stopPropagation();
+  exportArtwork();
 });
