@@ -10,29 +10,12 @@ const IMAGES = ["./1.jpg", "./3.jpg", "./2.jpg", "./4.jpg", "./5.jpg"];
    DISTORTION SEEDS PER IMAGE
 ================================================== */
 const DISTORTION_AB = [
-  { A: 1.5, B: 0.1},  // calm  // rough
+  { A: 1.5, B: 0.1},
   { A: 2.0, B: 0.3 },
-  { A: 1.7, B: 0.05 },  // chaotic
-  { A: 1.9, B: 0.3 },  // swirl
-  { A: 1.5, B: 0.04 }   // broken
+  { A: 1.7, B: 0.05 },
+  { A: 1.9, B: 0.3 },
+  { A: 1.5, B: 0.04 }
 ];
-
-// let currentA = DISTORTION_AB[0].A;
-// let currentB = DISTORTION_AB[0].B;
-
-// let targetA = currentA;
-// let targetB = currentB;
-
-// const TRANSITION_SPEED = 0.06; // 0.04–0.1 tuỳ cảm giác
-
-// function applyDistortionByImage(src) {
-//   const index = IMAGES.indexOf(src);
-//   const profile = DISTORTION_AB[index] ?? DISTORTION_AB[0];
-
-//   targetA = profile.A;
-//   targetB = profile.B;
-// }
-
 
 const MIN_X = 0.005;
 const MAX_X = 0.035;
