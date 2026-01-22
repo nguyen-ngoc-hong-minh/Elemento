@@ -334,9 +334,6 @@ material.uniforms.uY.value = THREE.MathUtils.lerp(
 // =========================
 // LOADING SCREEN
 // =========================
-// =========================
-// LOADING SCREEN
-// =========================
 
 const loadingOverlay = document.getElementById("loading-overlay");
 const loadingText = document.getElementById("loading-text");
