@@ -354,7 +354,7 @@ function startLoadingAnimation() {
     loadingText.textContent = `[Loading${dots}]`;
 
     dotCount = (dotCount + 1) % 4; // 0 → 1 → 2 → 3 → 0
-  }, 00);
+  }, 400);
 }
 
 // STOP DOT ANIMATION
