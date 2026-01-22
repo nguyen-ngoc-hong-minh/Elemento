@@ -56,49 +56,50 @@ function prevImage() {
 ================================================== */
 const CONTENTS = [
   {
-    title: "Wade of Eternity",
+    title: "Edge Of Legacy",
     subtitle: [
-      "| Song of Grief Song of |",
-      "| Grief Song of Grief Song of Grief |",
-      "| Song of Grief Song of Grief |"
+      "| First blades to conquer new lands. |",
+      "| Bells and gongs ringing through rituals. |",
+      "| Coins clinking of exchange and civilization. |"
     ],
-    body: "Wade of Eternity Lorem Ipsum is simply dummy text."
+    body: "We have forgotten the weight of what we hold. Metal speaks in voices we've dulled over time — the ring of a blade cutting through history, the resonance of bronze bells calling to something sacred, the sharp clink of currency passing from hand to hand, building empires and breaking them. But if you pause, if you feel the cold surface warming under your palm, you'll hear them converging. This is not hardness. This is the element that has shaped us, sharpened us, taught us that strength and fragility are forged in the same fire. Elemento invites you to hold still. To listen to what endures. To let the metallic hum awaken something ancient within you, where sound becomes resolve, and resolve becomes legacy."
+
   },
   {
-    title: "Breath of Wood",
+    title: "Currents Of Inheritance",
     subtitle: [
-      "| Growth without force |",
-      "| Direction without noise |",
-      "| Becoming unseen |"
+      "| Gentle ripples to rushing currents. |",
+      "| Ancient songs passed down through centuries. |",
+      "| Sweat falling, carrying weight of survival. |"
     ],
-    body: "Breath of Wood Lorem Ipsum is simply dummy text."
+    body: "We move too quickly past the sounds that hold us. Water speaks in layers we've learned to ignore — the rush of a stream, the breath of something living beneath the waves, the quiet exhaustion of survival. But if you stop, if you truly listen, you'll hear them weaving together. This is not background noise. This is the harmony that has shaped us, sustained us, connected us to something older and larger than ourselves. Elemento invites you to slow down. To close your eyes. To let the current carry you inward, where sound becomes feeling, and feeling becomes memory."
   },
-  {
-    title: "Still Water",
+{
+    title: "Roots Of Wild",
     subtitle: [
-      "| Reflection without source |",
-      "| Depth without gravity |",
-      "| Motion without trace |"
+      "| The tangled neurons of nature's great soul. |",
+      "| Submission before the sovereign of forest. |",
+      "| Sweet berries that nourish or kill. |"
     ],
-    body: "Water does not resist."
+    body: "We walk through green worlds we no longer understand. Wood speaks in whispers we've stopped translating — the deep network beneath our feet connecting everything unseen, the commanding presence of ancient trees that bend us to silence, the seductive taste of fruit that offers life or death with equal indifference. But if you kneel, if you press your ear to the earth, you'll hear them breathing as one. This is not stillness. This is the intelligence that has outlasted us, sheltered us, reminded us that survival is both gift and gamble. Elemento invites you to step into the canopy. To shed your certainty. To let the forest reclaim something wild within you, where sound becomes instinct, and instinct becomes reverence. "
   },
-  {
-    title: "Veins of Stone",
+{
+    title: "Flames Of Becoming",
     subtitle: [
-      "| Pressure remembers |",
-      "| Weight becomes form |",
-      "| Time hardens |"
+      "| The first spark to roaring wildfire. |",
+      "| Embers breathing in the darkness, alive. |",
+      "| Burning away what no longer serves. |"
     ],
-    body: "Veins of Stone Lorem Ipsum."
-  },
-  {
-    title: "Ash and Fire",
+    body: "We fear what burns, yet fire has always been our companion. It crackles in layers we've forgotten how to read — the snap of kindling catching light, the low hum of embers holding heat through the night, the roar of something unleashed and unstoppable. But if you lean closer, if you let the warmth reach you, you'll hear them speaking as one. This is not destruction. This is the force that has forged us, renewed us, reminded us that growth requires letting go. Elemento invites you to sit by the flame. To feel its pulse. To let the heat stir something dormant inside you, where sound becomes urgency, and urgency becomes change. Listen closely."
+},
+{
+    title: "Ground Of Return",
     subtitle: [
-      "| Heat without memory |",
-      "| Destruction clarifies |",
-      "| Essence remains |"
+      "| Clay shaped into vessels, civilization. |",
+      "| Treasures buried deep beneath tombs. |",
+      "| Earth receives things back into silence. |"
     ],
-    body: "Ash and Fire Lorem Ipsum."
+    body: "We build upon what we refuse to remember. Earth speaks in echoes we've paved over — the hands that molded clay into memory, the weight of gold and bone sleeping undisturbed in darkness, the patient soil that opens to receive every ending and turn it into beginning. But if you dig, if you let the dirt gather under your nails, you'll hear them holding everything together. This is not emptiness. This is the foundation that has cradled us, claimed us, promised us that nothing is ever truly lost. Elemento invites you to touch the ground. To feel its pull. To let the earth remind you of something buried within you, where sound becomes gravity, and gravity becomes home. Listen closely. The elements have always been speaking."
   }
 ];
 
