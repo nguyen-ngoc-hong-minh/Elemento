@@ -331,6 +331,76 @@ material.uniforms.uY.value = THREE.MathUtils.lerp(
   tick();
 }
 
+// =========================
+// LOADING SCREEN
+// =========================
+// =========================
+// LOADING SCREEN
+// =========================
+
+const loadingOverlay = document.getElementById("loading-overlay");
+const loadingText = document.getElementById("loading-text");
+
+let canStart = false;
+let experienceStarted = false;
+
+let loadingInterval = null;
+let dotCount = 0;
+
+// START DOT ANIMATION
+function startLoadingAnimation() {
+  loadingInterval = setInterval(() => {
+    const dots = ".".repeat(dotCount);
+    loadingText.textContent = `[Loading${dots}]`;
+
+    dotCount = (dotCount + 1) % 4; // 0 → 1 → 2 → 3 → 0
+  }, 400);
+}
+
+// STOP DOT ANIMATION
+function stopLoadingAnimation() {
+  clearInterval(loadingInterval);
+}
+
+// LOAD ÍT NHẤT 2s
+window.addEventListener("load", () => {
+  startLoadingAnimation();
+
+  setTimeout(() => {
+    stopLoadingAnimation();
+    loadingText.textContent = "[S]tart";
+    loadingText.classList.add("ready");
+    canStart = true;
+  }, 2000);
+});
+
+
+// START EXPERIENCE (CHỈ GỌI 1 LẦN)
+function startExperience() {
+  if (!canStart || experienceStarted) return;
+
+  experienceStarted = true;
+  loadingOverlay.classList.add("hidden");
+
+  // 🔊 CHỈ BẬT NHẠC LẦN ĐẦU Ở ĐÂY
+  if (typeof toggleMusic === "function" && !musicPlaying) {
+    toggleMusic();
+  }
+}
+
+// CLICK START
+loadingText.addEventListener("click", () => {
+  startExperience();
+});
+
+// PRESS S — CHỈ HOẠT ĐỘNG TRƯỚC KHI START
+window.addEventListener("keydown", (e) => {
+  if ((e.key === "s" || e.key === "S") && canStart && !experienceStarted) {
+    startExperience();
+  }
+});
+
+
 /* ==================================================
    RESIZE
 ================================================== */
