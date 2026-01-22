@@ -122,7 +122,7 @@ const FADE_TIME = 0.6; // seconds
 // =========================
 
 const TRACK_OFFSETS = [
-  3,
+  0,
   0,
   0,
   0,
