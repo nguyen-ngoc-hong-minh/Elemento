@@ -1,6 +1,5 @@
-
 // =========================
-// ABOUT (FADE)
+// ABOUT OVERLAY
 // =========================
 const aboutBtn = document.getElementById("about");
 const aboutOverlay = document.getElementById("about-overlay");
@@ -12,33 +11,32 @@ function toggleAbout(force) {
   aboutOverlay.classList.toggle("hidden", !aboutOpen);
 }
 
-// CLICK BUTTON
 aboutBtn.addEventListener("click", () => {
   toggleAbout();
 });
 
-// CLICK NỀN ĐEN → ĐÓNG
 aboutOverlay.addEventListener("click", (e) => {
   if (e.target === aboutOverlay) {
     toggleAbout(false);
   }
 });
 
-// PHÍM TẮT
 window.addEventListener("keydown", (e) => {
   if (e.key === "a" || e.key === "A") {
     toggleAbout();
   }
-
 });
 
+// =========================
+// CREDIT OVERLAY
+// =========================
 const creditBtn = document.querySelector(".credit");
 const aboutBox = document.querySelector(".about-box");
 
 let creditOpen = false;
 
 creditBtn.addEventListener("click", (e) => {
-  e.stopPropagation(); // tránh click lan ra overlay
+  e.stopPropagation();
 
   creditOpen = !creditOpen;
   aboutBox.classList.toggle("show-credit", creditOpen);
@@ -96,7 +94,7 @@ https://breakingcopyright.com<br>
   https://creativecommons.org/licenses/by/3.0/<br>
   Music powered by BreakingCopyright:<br>
   https://breakingcopyright.com
-  `
+  `,
 ];
 const creditContent = document.querySelector(".credit-content");
 
@@ -105,9 +103,8 @@ function updateCredit() {
   creditContent.innerHTML = CREDIT_TEXTS[currentTrackIndex] || "";
 }
 
-
 // =========================
-// MUSIC SYSTEM (FADE + PLAYLIST)
+// MUSIC
 // =========================
 
 let tracks = [];
@@ -115,19 +112,9 @@ let currentTrackIndex = 0;
 let bgm;
 let musicPlaying = false;
 
-const FADE_TIME = 0.6; // seconds
+const FADE_TIME = 0.6;
 
-// =========================
-// LOAD MUSIC
-// =========================
-
-const TRACK_OFFSETS = [
-  0,
-  0,
-  0,
-  0,
-  3
-];
+const TRACK_OFFSETS = [0, 0, 0, 0, 3];
 
 function preload() {
   tracks = [
@@ -139,17 +126,11 @@ function preload() {
   ];
 }
 
-// =========================
-// SETUP
-// =========================
 function setup() {
-  getAudioContext().suspend(); // block autoplay
+  getAudioContext().suspend();
   bgm = tracks[currentTrackIndex];
 }
 
-// =========================
-// TOGGLE MUSIC (P)
-// =========================
 function toggleMusic() {
   if (!bgm || !bgm.isLoaded()) return;
 
@@ -158,7 +139,7 @@ function toggleMusic() {
   if (!musicPlaying) {
     bgm.setVolume(0);
     const offset = TRACK_OFFSETS[currentTrackIndex] || 0;
-bgm.play(0, 1, 1, offset);
+    bgm.play(0, 1, 1, offset);
 
     bgm.amp(1, FADE_TIME);
     musicPlaying = true;
@@ -176,7 +157,7 @@ bgm.play(0, 1, 1, offset);
 }
 
 // =========================
-// CHANGE TRACK (← / → / BUTTON)
+// CHANGE TRACK
 // =========================
 function changeTrack(direction) {
   if (!tracks.length) return;
@@ -200,7 +181,7 @@ function changeTrack(direction) {
     if (wasPlaying && bgm.isLoaded()) {
       bgm.setVolume(0);
       const offset = TRACK_OFFSETS[currentTrackIndex] || 0;
-bgm.play(0, 1, 1, offset);
+      bgm.play(0, 1, 1, offset);
 
       bgm.amp(1, FADE_TIME);
       musicPlaying = true;
@@ -208,26 +189,17 @@ bgm.play(0, 1, 1, offset);
 
     updateCredit();
 
-
     updatePlayButton();
   }, FADE_TIME * 1000);
 }
 
-// =========================
-// UPDATE BUTTON TEXT
-// =========================
+// PLAY / PAUSE
 function updatePlayButton() {
   const playBtn = document.getElementById("play");
   if (!playBtn) return;
 
-  playBtn.textContent = musicPlaying
-    ? "[P]ause music"
-    : "[P]lay music";
+  playBtn.textContent = musicPlaying ? "[P]ause music" : "[P]lay music";
 }
-
-// =========================
-// UI EVENTS
-// =========================
 
 // PLAY / PAUSE BUTTON
 const playBtn = document.getElementById("play");
@@ -256,9 +228,7 @@ if (nextBtn) {
   });
 }
 
-// =========================
 // KEYBOARD
-// =========================
 function keyPressed() {
   if (key === "p" || key === "P") {
     toggleMusic();
@@ -272,7 +242,6 @@ function keyPressed() {
     changeTrack(-1);
   }
 }
-
 
 // =====================
 // ZEN MODE LOOP
@@ -305,7 +274,7 @@ function toggleZen() {
   applyZenStep();
 }
 
-window.addEventListener("keydown", e => {
+window.addEventListener("keydown", (e) => {
   if (e.key === "z" || e.key === "Z") toggleZen();
 });
 
@@ -316,18 +285,17 @@ function resetZen() {
   applyZenStep();
 }
 
-// Click anywhere
+// CLICK ANYWHERE
 window.addEventListener("click", (e) => {
   if (e.target.closest("#zen")) return;
   resetZen();
 });
 
 // =====================
-// BOX1 – DITHER (p5 INSTANCE)
+// BOX1 – DITHER
 // =====================
 
 const box1Sketch = (p) => {
-
   let ditherImg;
   let box1;
   let ditherTime = 0;
@@ -341,12 +309,10 @@ const box1Sketch = (p) => {
     [15, 7, 13, 5],
     [3, 11, 1, 9],
     [12, 4, 14, 6],
-    [0, 8, 2, 10]
+    [0, 8, 2, 10],
   ];
 
-  // ---------------------
   // SETUP
-  // ---------------------
   p.setup = () => {
     window.requestAnimationFrame(() => {
       box1 = document.getElementById("box1");
@@ -372,9 +338,7 @@ const box1Sketch = (p) => {
     });
   };
 
-  // ---------------------
   // SCROLL
-  // ---------------------
   function onBoxScroll(e) {
     e.preventDefault();
 
@@ -383,20 +347,16 @@ const box1Sketch = (p) => {
     pixelSize = p.constrain(pixelSize, PIXEL_MIN, PIXEL_MAX);
   }
 
-  // ---------------------
   // LOAD IMAGE
-  // ---------------------
   function loadDither(src) {
     ditherImg = p.loadImage(
       src,
       () => p.redraw(),
-      () => console.error("❌ Dither image failed:", src)
+      () => console.error("❌ Dither image failed:", src),
     );
   }
 
-  // ---------------------
   // DRAW
-  // ---------------------
   p.draw = () => {
     if (!ditherImg) return;
 
@@ -407,7 +367,6 @@ const box1Sketch = (p) => {
 
     for (let y = 0; y < p.height; y++) {
       for (let x = 0; x < p.width; x++) {
-
         const ix = Math.floor(p.map(x, 0, p.width, 0, ditherImg.width));
         const iy = Math.floor(p.map(y, 0, p.height, 0, ditherImg.height));
         const idx = (iy * ditherImg.width + ix) * 4;
@@ -423,8 +382,7 @@ const box1Sketch = (p) => {
 
         const pulse = Math.sin(ditherTime + (x + y) * 0.01) * 20;
 
-        const threshold =
-          (bayer4[by][bx] / 16) * 255 * 1.6 + pulse + 40;
+        const threshold = (bayer4[by][bx] / 16) * 255 * 1.6 + pulse + 40;
 
         if (gray > threshold) {
           p.noStroke();
@@ -433,7 +391,7 @@ const box1Sketch = (p) => {
             Math.floor(x / pixelSize) * pixelSize,
             Math.floor(y / pixelSize) * pixelSize,
             pixelSize,
-            pixelSize
+            pixelSize,
           );
         }
       }
@@ -441,18 +399,13 @@ const box1Sketch = (p) => {
   };
 };
 
-// =====================
-// INIT BOX1
-// =====================
 new p5(box1Sketch);
-
 
 // =====================
 // BOX3 - ASCII
 // =====================
 
-new p5(p => {
-
+new p5((p) => {
   let img;
   let box3;
 
@@ -468,14 +421,9 @@ new p5(p => {
 
   // LOAD IMAGE
   function loadImg(src) {
-    img = p.loadImage(
-  src,
-  () => {
-    // ép p5 vẽ ngay frame kế tiếp
-    if (!p._loop) p.loop();
-  }
-);
-
+    img = p.loadImage(src, () => {
+      if (!p._loop) p.loop();
+    });
   }
 
   // SETUP
@@ -487,10 +435,7 @@ new p5(p => {
         return;
       }
 
-      const c = p.createCanvas(
-        box3.clientWidth,
-        box3.clientHeight
-      );
+      const c = p.createCanvas(box3.clientWidth, box3.clientHeight);
       c.parent(box3);
       c.style("display", "block");
 
@@ -504,9 +449,8 @@ new p5(p => {
 
       window.ImageState.onChange(loadImg);
       if (window.ImageState.src) {
-  loadImg(window.ImageState.src);
-}
-
+        loadImg(window.ImageState.src);
+      }
 
       // HOVER + SCROLL CONTROL
       box3.addEventListener("mouseenter", () => {
@@ -517,75 +461,73 @@ new p5(p => {
         hoverBox3 = false;
       });
 
-      box3.addEventListener("wheel", (e) => {
-        if (!hoverBox3) return;
+      box3.addEventListener(
+        "wheel",
+        (e) => {
+          if (!hoverBox3) return;
 
-        e.preventDefault();
+          e.preventDefault();
 
-        const dir = e.deltaY < 0 ? 1 : -1;
-        cellSize += dir * 1.5;
-        cellSize = p.constrain(cellSize, CELL_MIN, CELL_MAX);
-      }, { passive: false });
+          const dir = e.deltaY < 0 ? 1 : -1;
+          cellSize += dir * 1.5;
+          cellSize = p.constrain(cellSize, CELL_MIN, CELL_MAX);
+        },
+        { passive: false },
+      );
     });
   };
 
   // DRAW – ASCII ANIMATED
   p.draw = () => {
-  if (!img || !img.width) return;
+    if (!img || !img.width) return;
 
+    p.clear();
+    p.textSize(cellSize);
 
-  p.clear();
-  p.textSize(cellSize);
+    t += 0.15;
 
-  t += 0.15;
+    const scale = p.height / img.height;
+    const drawW = img.width * scale;
+    const offsetX = (p.width - drawW) * 0.5;
 
-  const scale = p.height / img.height;
-  const drawW = img.width * scale;
-  const offsetX = (p.width - drawW) * 0.5;
+    img.loadPixels();
 
-  img.loadPixels();
+    const BASE_CELL = 10;
 
-  const BASE_CELL = 10;
+    const cols = Math.floor(drawW / BASE_CELL);
+    const rows = Math.floor(p.height / BASE_CELL);
 
-  const cols = Math.floor(drawW / BASE_CELL);
-  const rows = Math.floor(p.height / BASE_CELL);
+    const skip = Math.max(1, Math.floor(cellSize / BASE_CELL));
 
-  const skip = Math.max(1, Math.floor(cellSize / BASE_CELL));
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if ((x + y) % skip !== 0) continue;
 
-  for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < cols; x++) {
+        const ix = Math.floor(p.map(x * BASE_CELL, 0, drawW, 0, img.width));
+        const iy = Math.floor(p.map(y * BASE_CELL, 0, p.height, 0, img.height));
 
-      if ((x + y) % skip !== 0) continue;
+        const idx = (iy * img.width + ix) * 4;
+        const r = img.pixels[idx];
+        const g = img.pixels[idx + 1];
+        const b = img.pixels[idx + 2];
 
-      const ix = Math.floor(
-        p.map(x * BASE_CELL, 0, drawW, 0, img.width)
-      );
-      const iy = Math.floor(
-        p.map(y * BASE_CELL, 0, p.height, 0, img.height)
-      );
+        const v = 0.299 * r + 0.587 * g + 0.114 * b;
+        if (v < 150) continue;
 
-      const idx = (iy * img.width + ix) * 4;
-      const r = img.pixels[idx];
-      const g = img.pixels[idx + 1];
-      const b = img.pixels[idx + 2];
+        const charIndex = Math.floor(
+          (v * 0.02 + t + (x + y) * 0.1) % ASCII_CHARS.length,
+        );
 
-      const v = 0.299 * r + 0.587 * g + 0.114 * b;
-      if (v < 150) continue;
+        const ch = ASCII_CHARS.charAt(charIndex);
 
-      const charIndex = Math.floor(
-        (v * 0.02 + t + (x + y) * 0.1) % ASCII_CHARS.length
-      );
-
-      const ch = ASCII_CHARS.charAt(charIndex);
-
-      p.text(
-        ch,
-        offsetX + x * BASE_CELL + BASE_CELL * 0.5,
-        y * BASE_CELL + BASE_CELL * 0.6
-      );
+        p.text(
+          ch,
+          offsetX + x * BASE_CELL + BASE_CELL * 0.5,
+          y * BASE_CELL + BASE_CELL * 0.6,
+        );
+      }
     }
-  }
-};
+  };
 
   // RESIZE
   p.windowResized = () => {
@@ -593,24 +535,20 @@ new p5(p => {
     p.resizeCanvas(box3.clientWidth, box3.clientHeight);
     p.redraw();
   };
-
 });
 
 // =====================
 // BOX2 – HALFTONE
 // =====================
 
-new p5(p => {
-
+new p5((p) => {
   let img;
   let box2;
   let t = 0;
 
-  // =====================
   // HALFTONE SETTINGS
-  // =====================
   let DOT_SIZE = 6;
-  let DOT_MAX  = 4;
+  let DOT_MAX = 4;
 
   const DOT_SIZE_MIN = 5;
   const DOT_SIZE_MAX = 10;
@@ -622,9 +560,7 @@ new p5(p => {
 
   let hoverBox2 = false;
 
-  // =====================
   // LOAD IMAGE
-  // =====================
   function loadImg(src) {
     if (!src) return;
     img = p.loadImage(src, () => {
@@ -632,9 +568,7 @@ new p5(p => {
     });
   }
 
-  // =====================
   // SETUP
-  // =====================
   p.setup = () => {
     window.requestAnimationFrame(() => {
       box2 = document.getElementById("box2");
@@ -643,18 +577,14 @@ new p5(p => {
         return;
       }
 
-      const c = p.createCanvas(
-        box2.clientWidth,
-        box2.clientHeight
-      );
+      const c = p.createCanvas(box2.clientWidth, box2.clientHeight);
       c.parent(box2);
       c.style("display", "block");
 
-      // 🔒 KHÓA CSS SIZE → KHÔNG SCALE
-      c.elt.style.width  = box2.clientWidth + "px";
+      c.elt.style.width = box2.clientWidth + "px";
       c.elt.style.height = box2.clientHeight + "px";
 
-      // 🎯 PRINT / PIXEL STYLE
+      // PRINT / PIXEL STYLE
       p.pixelDensity(1);
       p.noSmooth();
       p.noStroke();
@@ -666,9 +596,7 @@ new p5(p => {
       }
       window.ImageState?.onChange(loadImg);
 
-      // =====================
       // HOVER + SCROLL
-      // =====================
       box2.addEventListener("mouseenter", () => {
         hoverBox2 = true;
       });
@@ -677,24 +605,26 @@ new p5(p => {
         hoverBox2 = false;
       });
 
-      box2.addEventListener("wheel", e => {
-        if (!hoverBox2) return;
+      box2.addEventListener(
+        "wheel",
+        (e) => {
+          if (!hoverBox2) return;
 
-        e.preventDefault();
-        const dir = e.deltaY < 0 ? 1 : -1;
+          e.preventDefault();
+          const dir = e.deltaY < 0 ? 1 : -1;
 
-        DOT_SIZE += dir * 0.5;
-        DOT_MAX  += dir * 0.5;
+          DOT_SIZE += dir * 0.5;
+          DOT_MAX += dir * 0.5;
 
-        DOT_SIZE = p.constrain(DOT_SIZE, DOT_SIZE_MIN, DOT_SIZE_MAX);
-        DOT_MAX  = p.constrain(DOT_MAX,  DOT_MAX_MIN,  DOT_MAX_MAX);
-      }, { passive: false });
+          DOT_SIZE = p.constrain(DOT_SIZE, DOT_SIZE_MIN, DOT_SIZE_MAX);
+          DOT_MAX = p.constrain(DOT_MAX, DOT_MAX_MIN, DOT_MAX_MAX);
+        },
+        { passive: false },
+      );
     });
   };
 
-  // =====================
   // DRAW – HALFTONE
-  // =====================
   p.draw = () => {
     if (!img || !img.width) return;
 
@@ -703,9 +633,9 @@ new p5(p => {
     p.clear();
     p.fill(255);
 
-    // ===== FULL HEIGHT (COVER) =====
-    const scale   = p.height / img.height;
-    const drawW   = img.width * scale;
+    // ===== FULL HEIGHT =====
+    const scale = p.height / img.height;
+    const drawW = img.width * scale;
     const offsetX = (p.width - drawW) * 0.5;
 
     img.loadPixels();
@@ -715,20 +645,14 @@ new p5(p => {
 
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
-
-        // === VỊ TRÍ DOT (SNAP GRID) ===
         let px = offsetX + x * DOT_SIZE + DOT_SIZE * 0.5;
         let py = y * DOT_SIZE + DOT_SIZE * 0.5;
 
         px = Math.round(px);
         py = Math.round(py);
 
-        const ix = Math.floor(
-          p.map(px - offsetX, 0, drawW, 0, img.width)
-        );
-        const iy = Math.floor(
-          p.map(py, 0, p.height, 0, img.height)
-        );
+        const ix = Math.floor(p.map(px - offsetX, 0, drawW, 0, img.width));
+        const iy = Math.floor(p.map(py, 0, p.height, 0, img.height));
 
         const idx = (iy * img.width + ix) * 4;
         const r = img.pixels[idx];
@@ -738,17 +662,11 @@ new p5(p => {
         const v = 0.299 * r + 0.587 * g + 0.114 * b;
         if (v < THRESHOLD) continue;
 
-        // ===== CONTRAST BOOST =====
         const l = p.constrain(v, 50, 210);
         let radius = p.map(l, 50, 210, DOT_MAX, 0);
 
-        // ===== ANIMATION (SAFE SCALE) =====
-        const anim =
-          p.map(
-            p.sin(t + py * 0.05),
-            -1, 1,
-            0.6, 1.0
-          );
+        // ===== ANIMATION =====
+        const anim = p.map(p.sin(t + py * 0.05), -1, 1, 0.6, 1.0);
 
         radius *= anim;
 
@@ -766,5 +684,4 @@ new p5(p => {
     if (!box2) return;
     p.resizeCanvas(box2.clientWidth, box2.clientHeight);
   };
-
 });
