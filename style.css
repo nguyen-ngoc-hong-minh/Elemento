@@ -132,7 +132,6 @@ canvas.webgl {
   width: 8px;
 }
 
-
 /* ===== CONTENT ===== */
 .content {
   position: relative;
@@ -178,7 +177,6 @@ canvas.webgl {
 }
 
 /* ===== BOXES ===== */
-
 .boxes {
   position: absolute;
   right: 48px;
@@ -267,20 +265,17 @@ canvas.webgl {
     transform 0.5s ease;
 }
 
-/* trạng thái ẩn */
 .zen-hidden {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s ease;
 }
 
-/* =========================
-   ABOUT OVERLAY
-========================= */
+/* ===== ABOUT OVERLAY ===== */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8); /* lớp đen mờ */
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -327,7 +322,7 @@ canvas.webgl {
   opacity: 0.85;
 }
 
-/* CREDIT OVERLAY */
+/* ===== CREDIT OVERLAY ===== */
 .credit-content {
   position: absolute;
   inset: 24px;
@@ -358,9 +353,7 @@ canvas.webgl {
   pointer-events: auto;
 }
 
-/* =========================
-   LOADING OVERLAY
-========================= */
+/* ===== LOADING OVERLAY ===== */
 .loading-overlay {
   position: fixed;
   inset: 0;
@@ -384,7 +377,6 @@ canvas.webgl {
   cursor: default;
 }
 
-/* khi đã sẵn sàng start */
 #loading-text.ready {
   cursor: pointer;
   opacity: 1;
