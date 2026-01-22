@@ -46,51 +46,176 @@ creditBtn.addEventListener("click", (e) => {
   creditBtn.textContent = creditOpen ? "[Back]" : "[Credit]";
 });
 
+const CREDIT_TEXTS = [
+  `
+  Song: Aura<br>
+  Composer: Sappheiros<br>
+  Website: https://open.spotify.com/artist/<br>
+  5ZVHXQZAIn9WJXvy6qn9K0<br>
+  License: Creative Commons (BY 3.0)<br> 
+  https://creativecommons.org/licenses/by/3.0/<br>
+  Music powered by BreakingCopyright:<br>
+  https://breakingcopyright.com
+  `,
+
+  `
+  Song: Waters Edge<br>
+  Composer: Pyrosion<br>
+  Website: https://www.youtube.com/channel/<br>
+  UCHX5zwVupCDjLZ-3fINQvKQ<br>
+  License: Creative Commons (BY 3.0)<br>
+  https://creativecommons.org/licenses/by/3.0/<br>
+  Music powered by BreakingCopyright:<br>
+   https://breakingcopyright.com
+  `,
+
+  `
+  Song: Origami<br>
+  Composer: Scott Buckley<br>
+  Website: https://youtube.com/user/musicbyscottb<br>
+  License: Creative Commons (BY 4.0)<br>
+  https://creativecommons.org/licenses/by/4.0/<br>
+  Music powered by BreakingCopyright:<br>
+  https://breakingcopyright.com
+  `,
+
+  `
+Song: Flowing Into The Darkness<br>
+Composer: Nyoko<br>
+Website: https://soundcloud.com/redowthered<br>
+License: Free To Use YouTube license youtube-free<br>
+Music powered by BreakingCopyright:<br>
+https://breakingcopyright.com<br>
+  `,
+
+  `
+  Song: Snowfall<br>
+  Composer: Scott Buckley<br>
+  Website: https://youtube.com/user/musicbyscottb<br>
+  License: Creative Commons (BY 3.0)<br> 
+  https://creativecommons.org/licenses/by/3.0/<br>
+  Music powered by BreakingCopyright:<br>
+  https://breakingcopyright.com
+  `
+];
+const creditContent = document.querySelector(".credit-content");
+
+function updateCredit() {
+  if (!creditContent) return;
+  creditContent.innerHTML = CREDIT_TEXTS[currentTrackIndex] || "";
+}
+
+
 // =========================
-// MUSIC SYSTEM (FADE)
+// MUSIC SYSTEM (FADE + PLAYLIST)
 // =========================
 
+let tracks = [];
+let currentTrackIndex = 0;
 let bgm;
 let musicPlaying = false;
 
-const FADE_TIME = 1.2; // seconds
+const FADE_TIME = 0.6; // seconds
 
+// =========================
 // LOAD MUSIC
+// =========================
+
+const TRACK_OFFSETS = [
+  3,
+  0,
+  0,
+  0,
+  3
+];
+
 function preload() {
-  bgm = loadSound("Flowing Into The Darkness.mp3");
+  tracks = [
+    loadSound("AURA.mp3"),
+    loadSound("WATERS EDGE.mp3"),
+    loadSound("ORIGAMI.mp3"),
+    loadSound("Flowing Into The Darkness.mp3"),
+    loadSound("Snowfall.mp3"),
+  ];
 }
 
+// =========================
 // SETUP
+// =========================
 function setup() {
-  getAudioContext().suspend(); // chặn autoplay
+  getAudioContext().suspend(); // block autoplay
+  bgm = tracks[currentTrackIndex];
 }
 
-// TOGGLE MUSIC WITH FADE
+// =========================
+// TOGGLE MUSIC (P)
+// =========================
 function toggleMusic() {
+  if (!bgm || !bgm.isLoaded()) return;
+
   userStartAudio();
 
   if (!musicPlaying) {
-    // ---- FADE IN ----
     bgm.setVolume(0);
-    bgm.loop();
-    bgm.amp(1, FADE_TIME);
+    const offset = TRACK_OFFSETS[currentTrackIndex] || 0;
+bgm.play(0, 1, 1, offset);
 
+    bgm.amp(1, FADE_TIME);
     musicPlaying = true;
   } else {
-    // ---- FADE OUT ----
     bgm.amp(0, FADE_TIME);
-
     setTimeout(() => {
-      bgm.pause(); // pause sau khi fade xong
+      bgm.pause();
     }, FADE_TIME * 1000);
-
     musicPlaying = false;
   }
+
+  updateCredit();
 
   updatePlayButton();
 }
 
+// =========================
+// CHANGE TRACK (← / → / BUTTON)
+// =========================
+function changeTrack(direction) {
+  if (!tracks.length) return;
+
+  userStartAudio();
+
+  const wasPlaying = musicPlaying;
+
+  if (bgm && bgm.isPlaying()) {
+    bgm.amp(0, FADE_TIME);
+  }
+
+  setTimeout(() => {
+    if (bgm) bgm.stop();
+
+    currentTrackIndex =
+      (currentTrackIndex + direction + tracks.length) % tracks.length;
+
+    bgm = tracks[currentTrackIndex];
+
+    if (wasPlaying && bgm.isLoaded()) {
+      bgm.setVolume(0);
+      const offset = TRACK_OFFSETS[currentTrackIndex] || 0;
+bgm.play(0, 1, 1, offset);
+
+      bgm.amp(1, FADE_TIME);
+      musicPlaying = true;
+    }
+
+    updateCredit();
+
+
+    updatePlayButton();
+  }, FADE_TIME * 1000);
+}
+
+// =========================
 // UPDATE BUTTON TEXT
+// =========================
 function updatePlayButton() {
   const playBtn = document.getElementById("play");
   if (!playBtn) return;
@@ -104,7 +229,7 @@ function updatePlayButton() {
 // UI EVENTS
 // =========================
 
-// CLICK BUTTON
+// PLAY / PAUSE BUTTON
 const playBtn = document.getElementById("play");
 if (playBtn) {
   playBtn.addEventListener("click", (e) => {
@@ -113,10 +238,38 @@ if (playBtn) {
   });
 }
 
+// PREV BUTTON
+const prevBtn = document.getElementById("prev");
+if (prevBtn) {
+  prevBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    changeTrack(-1);
+  });
+}
+
+// NEXT BUTTON
+const nextBtn = document.getElementById("next");
+if (nextBtn) {
+  nextBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    changeTrack(1);
+  });
+}
+
+// =========================
 // KEYBOARD
+// =========================
 function keyPressed() {
   if (key === "p" || key === "P") {
     toggleMusic();
+  }
+
+  if (keyCode === RIGHT_ARROW) {
+    changeTrack(1);
+  }
+
+  if (keyCode === LEFT_ARROW) {
+    changeTrack(-1);
   }
 }
 
@@ -170,108 +323,129 @@ window.addEventListener("click", (e) => {
 });
 
 // =====================
-// BOX1 – DITHER
+// BOX1 – DITHER (p5 INSTANCE)
 // =====================
-let ditherImg;
-let box1;
-let ditherTime = 0;
 
-let pixelSize = 1.0;
+const box1Sketch = (p) => {
 
-const PIXEL_MIN = 1.0;
-const PIXEL_MAX = 5.0;
+  let ditherImg;
+  let box1;
+  let ditherTime = 0;
 
-const bayer4 = [
-  [15, 7, 13, 5],
-  [3, 11, 1, 9],
-  [12, 4, 14, 6],
-  [0, 8, 2, 10]
-];
+  let pixelSize = 1.0;
 
-function setup() {
-  window.requestAnimationFrame(() => {
-    box1 = document.getElementById("box1");
-    if (!box1) {
-      console.error("❌ box1 not found");
-      return;
-    }
+  const PIXEL_MIN = 1.0;
+  const PIXEL_MAX = 5.0;
 
-    const c = createCanvas(box1.clientWidth, box1.clientHeight);
-    c.parent(box1);
-    c.style("position", "absolute");
-    c.style("inset", "0");
-    c.style("z-index", "1");
+  const bayer4 = [
+    [15, 7, 13, 5],
+    [3, 11, 1, 9],
+    [12, 4, 14, 6],
+    [0, 8, 2, 10]
+  ];
 
-    noSmooth();
-    pixelDensity(1);
-    loop();
+  // ---------------------
+  // SETUP
+  // ---------------------
+  p.setup = () => {
+    window.requestAnimationFrame(() => {
+      box1 = document.getElementById("box1");
+      if (!box1) {
+        console.error("❌ box1 not found");
+        return;
+      }
 
-    loadDither(window.ImageState.src);
-    window.ImageState.onChange(loadDither);
-    
+      const c = p.createCanvas(box1.clientWidth, box1.clientHeight);
+      c.parent(box1);
+      c.style("position", "absolute");
+      c.style("inset", "0");
+      c.style("z-index", "1");
 
-    box1.addEventListener("wheel", onBoxScroll, { passive: false });
-  });
-}
+      p.noSmooth();
+      p.pixelDensity(1);
+      p.loop();
 
-function onBoxScroll(e) {
-  e.preventDefault();
+      loadDither(window.ImageState.src);
+      window.ImageState.onChange(loadDither);
 
-  const dir = e.deltaY < 0 ? 1 : -1;
-  pixelSize += dir * 0.5;
-  pixelSize = constrain(pixelSize, PIXEL_MIN, PIXEL_MAX);
-}
+      box1.addEventListener("wheel", onBoxScroll, { passive: false });
+    });
+  };
 
-function loadDither(src) {
-  ditherImg = loadImage(
-    src,
-    () => redraw(),
-    () => console.error("❌ Dither image failed:", src)
-  );
-}
+  // ---------------------
+  // SCROLL
+  // ---------------------
+  function onBoxScroll(e) {
+    e.preventDefault();
 
-function draw() {
-  if (!ditherImg) return;
+    const dir = e.deltaY < 0 ? 1 : -1;
+    pixelSize += dir * 0.5;
+    pixelSize = p.constrain(pixelSize, PIXEL_MIN, PIXEL_MAX);
+  }
 
-  clear();
-  ditherImg.loadPixels();
+  // ---------------------
+  // LOAD IMAGE
+  // ---------------------
+  function loadDither(src) {
+    ditherImg = p.loadImage(
+      src,
+      () => p.redraw(),
+      () => console.error("❌ Dither image failed:", src)
+    );
+  }
 
-  ditherTime += 0.1;
+  // ---------------------
+  // DRAW
+  // ---------------------
+  p.draw = () => {
+    if (!ditherImg) return;
 
-  for (let y = 0; y < height; y += 1) {
-    for (let x = 0; x < width; x += 1) {
+    p.clear();
+    ditherImg.loadPixels();
 
-      const ix = floor(map(x, 0, width, 0, ditherImg.width));
-      const iy = floor(map(y, 0, height, 0, ditherImg.height));
-      const idx = (iy * ditherImg.width + ix) * 4;
+    ditherTime += 0.1;
 
-      const r = ditherImg.pixels[idx];
-      const g = ditherImg.pixels[idx + 1];
-      const b = ditherImg.pixels[idx + 2];
+    for (let y = 0; y < p.height; y++) {
+      for (let x = 0; x < p.width; x++) {
 
-      const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+        const ix = Math.floor(p.map(x, 0, p.width, 0, ditherImg.width));
+        const iy = Math.floor(p.map(y, 0, p.height, 0, ditherImg.height));
+        const idx = (iy * ditherImg.width + ix) * 4;
 
-      const bx = (x & 3);
-      const by = (y & 3);
+        const r = ditherImg.pixels[idx];
+        const g = ditherImg.pixels[idx + 1];
+        const b = ditherImg.pixels[idx + 2];
 
-      const pulse = sin(ditherTime + (x + y) * 0.01) * 20;
+        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
 
-      const threshold =
-        (bayer4[by][bx] / 16) * 255 * 1.6 + pulse + 40;
+        const bx = x & 3;
+        const by = y & 3;
 
-      if (gray > threshold) {
-        noStroke();
-        fill(255);
-        rect(
-          floor(x / pixelSize) * pixelSize,
-          floor(y / pixelSize) * pixelSize,
-          pixelSize,
-          pixelSize
-        );
+        const pulse = Math.sin(ditherTime + (x + y) * 0.01) * 20;
+
+        const threshold =
+          (bayer4[by][bx] / 16) * 255 * 1.6 + pulse + 40;
+
+        if (gray > threshold) {
+          p.noStroke();
+          p.fill(255);
+          p.rect(
+            Math.floor(x / pixelSize) * pixelSize,
+            Math.floor(y / pixelSize) * pixelSize,
+            pixelSize,
+            pixelSize
+          );
+        }
       }
     }
-  }
-}
+  };
+};
+
+// =====================
+// INIT BOX1
+// =====================
+new p5(box1Sketch);
+
 
 // =====================
 // BOX3 - ASCII
