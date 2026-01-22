@@ -1,3 +1,7 @@
+
+// =========================
+// ABOUT (FADE)
+// =========================
 const aboutBtn = document.getElementById("about");
 const aboutOverlay = document.getElementById("about-overlay");
 
@@ -25,7 +29,96 @@ window.addEventListener("keydown", (e) => {
   if (e.key === "a" || e.key === "A") {
     toggleAbout();
   }
+
 });
+
+const creditBtn = document.querySelector(".credit");
+const aboutBox = document.querySelector(".about-box");
+
+let creditOpen = false;
+
+creditBtn.addEventListener("click", (e) => {
+  e.stopPropagation(); // tránh click lan ra overlay
+
+  creditOpen = !creditOpen;
+  aboutBox.classList.toggle("show-credit", creditOpen);
+
+  creditBtn.textContent = creditOpen ? "[Back]" : "[Credit]";
+});
+
+// =========================
+// MUSIC SYSTEM (FADE)
+// =========================
+
+let bgm;
+let musicPlaying = false;
+
+const FADE_TIME = 1.2; // seconds
+
+// LOAD MUSIC
+function preload() {
+  bgm = loadSound("Flowing Into The Darkness.mp3");
+}
+
+// SETUP
+function setup() {
+  getAudioContext().suspend(); // chặn autoplay
+}
+
+// TOGGLE MUSIC WITH FADE
+function toggleMusic() {
+  userStartAudio();
+
+  if (!musicPlaying) {
+    // ---- FADE IN ----
+    bgm.setVolume(0);
+    bgm.loop();
+    bgm.amp(1, FADE_TIME);
+
+    musicPlaying = true;
+  } else {
+    // ---- FADE OUT ----
+    bgm.amp(0, FADE_TIME);
+
+    setTimeout(() => {
+      bgm.pause(); // pause sau khi fade xong
+    }, FADE_TIME * 1000);
+
+    musicPlaying = false;
+  }
+
+  updatePlayButton();
+}
+
+// UPDATE BUTTON TEXT
+function updatePlayButton() {
+  const playBtn = document.getElementById("play");
+  if (!playBtn) return;
+
+  playBtn.textContent = musicPlaying
+    ? "[P]ause music"
+    : "[P]lay music";
+}
+
+// =========================
+// UI EVENTS
+// =========================
+
+// CLICK BUTTON
+const playBtn = document.getElementById("play");
+if (playBtn) {
+  playBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleMusic();
+  });
+}
+
+// KEYBOARD
+function keyPressed() {
+  if (key === "p" || key === "P") {
+    toggleMusic();
+  }
+}
 
 
 // =====================
